@@ -47,8 +47,13 @@ async function run() {
     await exec.exec("sudo", ["pkill", "-HUP", "nix-daemon"]);
 
     // setup env
+    let nixPath: string | undefined = core.getInput('NIX_PATH');
+    if (typeof nixPath === "undefined") {
+      nixPath = '/nix/var/nix/profiles/per-user/root/channels';
+    }
+
     core.exportVariable('PATH', `${PATH}:/nix/var/nix/profiles/default/bin:/nix/var/nix/profiles/per-user/runner/profile/bin`)
-    core.exportVariable('NIX_PATH', `/nix/var/nix/profiles/per-user/root/channels`)
+    core.exportVariable('NIX_PATH', nixPath)
     if (type() == "Darwin") {
       // macOS needs certificates hints
       core.exportVariable('NIX_SSL_CERT_FILE', '/nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt');
@@ -58,7 +63,6 @@ async function run() {
       // macOS needs time to reload the daemon :(
       await exec.exec("sleep", ["10"]);
     }
-
   } catch (error) {
     core.setFailed(`Action failed with error: ${error}`);
     throw error;
