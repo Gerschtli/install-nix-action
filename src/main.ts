@@ -1,25 +1,25 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as tc from '@actions/tool-cache';
-import {type} from 'os';
+import { type } from 'os';
 
 async function nixConf() {
-    // Workaround a segfault: https://github.com/NixOS/nix/issues/2733
-    await exec.exec("sudo", ["mkdir", "-p", "/etc/nix"]);
-    await exec.exec("sudo", ["sh", "-c", "echo http2 = false >> /etc/nix/nix.conf"]);
+  // Workaround a segfault: https://github.com/NixOS/nix/issues/2733
+  await exec.exec("sudo", ["mkdir", "-p", "/etc/nix"]);
+  await exec.exec("sudo", ["sh", "-c", "echo http2 = false >> /etc/nix/nix.conf"]);
 
-    // Set jobs to number of cores
-    await exec.exec("sudo", ["sh", "-c", "echo max-jobs = auto >> /etc/nix/nix.conf"]);
+  // Set jobs to number of cores
+  await exec.exec("sudo", ["sh", "-c", "echo max-jobs = auto >> /etc/nix/nix.conf"]);
 
-    // Allow binary caches for runner user
-    await exec.exec("sudo", ["sh", "-c", "echo trusted-users = root runner >> /etc/nix/nix.conf"]);
+  // Allow binary caches for runner user
+  await exec.exec("sudo", ["sh", "-c", "echo trusted-users = root runner >> /etc/nix/nix.conf"]);
 }
 
 async function run() {
   try {
-    const PATH = process.env.PATH;  
+    const PATH = process.env.PATH;
     const INSTALL_PATH = '/opt/nix';
- 
+
     await nixConf();
 
     // Catalina workaround https://github.com/NixOS/nix/issues/2925
@@ -36,7 +36,7 @@ async function run() {
     }
 
     // Needed due to multi-user being too defensive
-    core.exportVariable('ALLOW_PREEXISTING_INSTALLATION', "1"); 
+    core.exportVariable('ALLOW_PREEXISTING_INSTALLATION', "1");
 
     // TODO: retry due to all the things that go wrong
     const nixInstall = await tc.downloadTool('https://nixos.org/nix/install');
@@ -61,8 +61,8 @@ async function run() {
 
   } catch (error) {
     core.setFailed(`Action failed with error: ${error}`);
-    throw(error);
-  } 
+    throw error;
+  }
 }
 
 run();
