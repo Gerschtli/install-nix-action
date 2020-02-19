@@ -48,9 +48,14 @@ async function run() {
 
     // setup env
     let nixPath: string | undefined = core.getInput('NIX_PATH');
+    console.log("one")
+    console.log(nixPath);
     if (typeof nixPath === "undefined") {
       nixPath = '/nix/var/nix/profiles/per-user/root/channels';
     }
+
+    console.log("two")
+    console.log(nixPath);
 
     core.exportVariable('PATH', `${PATH}:/nix/var/nix/profiles/default/bin:/nix/var/nix/profiles/per-user/runner/profile/bin`)
     core.exportVariable('NIX_PATH', nixPath)
