@@ -1,6 +1,7 @@
 import { execFileSync } from 'child_process';
 import { exit } from 'process';
 import { createConnection } from 'net';
+import { getInput } from '@actions/core';
 
 async function awaitSocket() {
   const daemonSocket = createConnection({ path: '/nix/var/nix/daemon-socket/socket' });
@@ -14,7 +15,7 @@ async function awaitSocket() {
   });
 }
 
-execFileSync(`${__dirname}/install-nix.sh`, { stdio: 'inherit' });
+execFileSync(`${__dirname}/install-nix.sh`, [getInput('NIX_PATH')], { stdio: 'inherit' });
 
 // nc doesn't work correctly on macOS :(
 awaitSocket();

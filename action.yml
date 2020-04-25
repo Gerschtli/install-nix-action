@@ -1,6 +1,10 @@
 name: 'Install Nix'
 description: 'Installs Nix on GitHub Actions for the supported platforms: Linux and macOS.'
 author: 'Domen Kožar'
+inputs:
+  NIX_PATH:
+    description: 'Set NIX_PATH environment variable'
+    required: false
 branding:
   color: 'blue'
   icon: 'sun'

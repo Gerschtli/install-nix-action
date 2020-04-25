@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+nixPath="${1:-/nix/var/nix/profiles/per-user/root/channels}"
+
 export here=$(dirname "${BASH_SOURCE[0]}")
 
 nixConf() {
@@ -45,4 +47,4 @@ sudo pkill -HUP nix-daemon
 # Set paths
 echo "::add-path::/nix/var/nix/profiles/per-user/runner/profile/bin"
 echo "::add-path::/nix/var/nix/profiles/default/bin"
-echo "::set-env name=NIX_PATH::/nix/var/nix/profiles/per-user/root/channels"
+echo "::set-env name=NIX_PATH::${nixPath}"

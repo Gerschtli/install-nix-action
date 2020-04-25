@@ -2,12 +2,20 @@ name: "install-nix-action test"
 on:
   pull_request:
   push:
+
 jobs:
   tests:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-18.04, macos-latest]
+        nixPath:
+          -
+          - nixpkgs=channel:nixos-unstable
+          - nixpkgs=https://github.com/NixOS/nixpkgs/archive/master.tar.gz
+
     runs-on: ${{ matrix.os }}
+
     steps:
     - uses: actions/checkout@v1
     - run: yarn install --frozen-lockfile
@@ -17,6 +25,8 @@ jobs:
     - run: yarn test
     - name: Install Nix
       uses: ./
+      with:
+        NIX_PATH: ${{ matrix.nixPath }}
     - run: nix-env -iA cachix -f https://github.com/NixOS/nixpkgs/tarball/ab5863afada3c1b50fc43bf774b75ea71b287cde
     - run: cat /etc/nix/nix.conf
     # cachix should be available and be able to configure a cache
